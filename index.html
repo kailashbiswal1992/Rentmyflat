@@ -284,7 +284,8 @@ header h1.header-logo {
     function clearForm(formId) {
       document.querySelectorAll(`#${formId} input, #${formId} select`).forEach(el => {
         // keep readonly fields as-is
-        if (!el.readOnly) el.value = "";
+       // if (!el.readOnly) 
+          el.value = "";
       });
     }
 
@@ -332,6 +333,7 @@ header h1.header-logo {
       await loadFlats();
 
       if (type === "user") alert("Your flat is submitted and awaiting admin approval.");
+      if (type === "admin") alert("Your flat is submitted and Posted.");
       if (type === "admin") clearForm("adminForm"); else clearForm("userForm");
     }
 
