@@ -367,16 +367,28 @@ header h1.header-logo {
       flats.forEach(flat => {
         const card = document.createElement("div");
         card.className = "flat-card";
+let contactHtml = "";
 
-        let contactHtml = "";
-        if (flat.showNumber === "Yes") {
-          // mobile stored as 10-digit Indian number
-          contactHtml = `<p><strong>Owner Contact:</strong> ${flat.mobile}</p>
-                         <a class="whatsapp" href="https://wa.me/91${flat.mobile}" target="_blank">Chat on WhatsApp</a>`;
-        } else {
-          contactHtml = `<p><strong>Contact:</strong> <em>Via Application Team</em></p>
-                         <a class="whatsapp" href="https://wa.me/91${defaultAppContact}" target="_blank">Contact App Team</a>`;
-        }
+// Owner message
+const defaultMsg = encodeURIComponent("Dear Owner, I am interested in your flat. Please share more details.");
+
+// Team message including flat number
+const teamMsg = `Dear Team, I am interested in renting flat ${flat.number} in Elegance Enclave. Please share more details.`;
+const defaultMsgforTeam = encodeURIComponent(teamMsg);
+
+if (flat.showNumber === "Yes") {
+  // owner contact
+  contactHtml = `<p><strong>Owner Contact:</strong> ${flat.mobile}</p>
+                 <a class="whatsapp" href="https://wa.me/91${flat.mobile}?text=${defaultMsg}" target="_blank" rel="noopener noreferrer">
+                   Chat on WhatsApp
+                 </a>`;
+} else {
+  // application team contact
+  contactHtml = `<p><strong>Contact:</strong> <em>Via Application Team</em></p>
+                 <a class="whatsapp" href="https://wa.me/91${defaultAppContact}?text=${defaultMsgforTeam}" target="_blank" rel="noopener noreferrer">
+                   Contact App Team
+                 </a>`;
+}
 
         card.innerHTML = `
           <h3>Flat ${flat.flatNumber} ${flat.sqft ? `(${flat.sqft} sqft)` : ""}</h3>
