@@ -69,12 +69,20 @@ header h1.header-logo {
       width: 100%; padding: 8px 12px; font-size: 16px; margin-top: 5px;
       border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;
     }
-    button {
-      margin-top: 12px; padding: 10px 18px; font-size: 16px; border: none;
-      background: purple; color: white; border-radius: 6px; cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    button:hover { background: #5a005a; }
+   button {
+  margin-top: 12px;
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  background: var(--primary-dark); /* Changed from 'purple' */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+button:hover {
+  background: var(--primary); /* Changed from '#5a005a' */
+}
     .controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
     .controls > * { flex:1; min-width:120px; }
     .flat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
