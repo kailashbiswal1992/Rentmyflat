@@ -195,17 +195,17 @@ button:hover {
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+    import { firebaseConfig } from './firebase-config.js';
     // Firebase config (already in your project)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDykGxIq2GUDxFkv28NLmdRmiQzlEjvFuw",
-      authDomain: "rento-56bca.firebaseapp.com",
-      projectId: "rento-56bca",
-      storageBucket: "rento-56bca.appspot.com",
-      messagingSenderId: "641174222477",
-      appId: "1:641174222477:web:583370943c737c015d14c4",
-      measurementId: "G-G2S1HW7ZNT"
-    };
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyDykGxIq2GUDxFkv28NLmdRmiQzlEjvFuw",
+    //   authDomain: "rento-56bca.firebaseapp.com",
+    //   projectId: "rento-56bca",
+    //   storageBucket: "rento-56bca.appspot.com",
+    //   messagingSenderId: "641174222477",
+    //   appId: "1:641174222477:web:583370943c737c015d14c4",
+    //   measurementId: "G-G2S1HW7ZNT"
+    // };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -487,7 +487,7 @@ if (flat.showNumber === "Yes") {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.1
+  v2025.1.0.2
 </div>
 </body>
 </html>
