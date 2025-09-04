@@ -196,17 +196,6 @@ button:hover {
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { firebaseConfig } from './firebase-config.js';
-    // Firebase config (already in your project)
-    // const firebaseConfig = {
-    //   apiKey: "AIzaSyDykGxIq2GUDxFkv28NLmdRmiQzlEjvFuw",
-    //   authDomain: "rento-56bca.firebaseapp.com",
-    //   projectId: "rento-56bca",
-    //   storageBucket: "rento-56bca.appspot.com",
-    //   messagingSenderId: "641174222477",
-    //   appId: "1:641174222477:web:583370943c737c015d14c4",
-    //   measurementId: "G-G2S1HW7ZNT"
-    // };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
@@ -214,9 +203,6 @@ button:hover {
     let pendingFlats = [];
     let isAdmin = false;
     const defaultAppContact = "8260147054"; // used when owner chooses not to show number
-
-    // SHA-256 hash for "admin123"
-    const adminPasswordHash = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
@@ -234,23 +220,36 @@ button:hover {
       box.style.display = (box.style.display === "none") ? "block" : "none";
     }
 
-    async function login() {
-      const pass = document.getElementById("adminPassword").value;
-      const hash = await sha256(pass);
-      if (hash === adminPasswordHash) {
-        isAdmin = true;
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminForm").style.display = "block";
-        document.getElementById("toggleLoginBtn").style.display = "none";
-        document.getElementById("postFlatBtn").style.display = "none";
-        document.getElementById("userForm").style.display = "none";
-        document.getElementById("logoutBox").style.display = "block";
-        document.getElementById("pendingList").style.display = "block";
-        await loadFlats();
-      } else {
-        alert("Incorrect Password!");
-      }
-    }
+import { getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+async function login() {
+  const pass = document.getElementById("adminPassword").value;
+
+  // Fetch admin password from Firestore
+  const adminDocRef = doc(db, "users", "admin");
+  const adminDoc = await getDoc(adminDocRef);
+
+  if (!adminDoc.exists()) {
+    alert("Admin credentials not set!");
+    return;
+  }
+
+  const adminPassword = adminDoc.data().password;
+
+  if (pass === adminPassword) {
+    isAdmin = true;
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminForm").style.display = "block";
+    document.getElementById("toggleLoginBtn").style.display = "none";
+    document.getElementById("postFlatBtn").style.display = "none";
+    document.getElementById("userForm").style.display = "none";
+    document.getElementById("logoutBox").style.display = "block";
+    document.getElementById("pendingList").style.display = "block";
+    await loadFlats();
+  } else {
+    alert("Incorrect Password!");
+  }
+}
 
     function logout() {
       isAdmin = false;
@@ -487,7 +486,7 @@ if (flat.showNumber === "Yes") {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.2
+  v2025.1.0.3
 </div>
 </body>
 </html>
