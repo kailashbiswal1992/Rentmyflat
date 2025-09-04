@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -226,9 +227,12 @@ async function loadAdminPassword() {
     }
 
     function toggleLogin() {
-      const box = document.getElementById("loginBox");
-      box.style.display = (box.style.display === "none") ? "block" : "none";
-    }
+  const box = document.getElementById("loginBox");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
+  if (box.style.display === "block") {
+    loadAdminPassword(); // <-- fetch password every time login is opened
+  }
+}
 
     function toggleUserForm() {
       const box = document.getElementById("userForm");
@@ -487,7 +491,7 @@ if (flat.showNumber === "Yes") {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.4
+  v2025.1.0.5
 </div>
 </body>
 </html>
