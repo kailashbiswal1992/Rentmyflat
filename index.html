@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,6 +205,9 @@ button:hover {
     let isAdmin = false;
     const defaultAppContact = "8260147054"; // used when owner chooses not to show number
 
+
+    const adminPasswordHash = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
@@ -220,36 +224,23 @@ button:hover {
       box.style.display = (box.style.display === "none") ? "block" : "none";
     }
 
-import { getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-async function login() {
-  const pass = document.getElementById("adminPassword").value;
-
-  // Fetch admin password from Firestore
-  const adminDocRef = doc(db, "users", "admin");
-  const adminDoc = await getDoc(adminDocRef);
-
-  if (!adminDoc.exists()) {
-    alert("Admin credentials not set!");
-    return;
-  }
-
-  const adminPassword = adminDoc.data().password;
-
-  if (pass === adminPassword) {
-    isAdmin = true;
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminForm").style.display = "block";
-    document.getElementById("toggleLoginBtn").style.display = "none";
-    document.getElementById("postFlatBtn").style.display = "none";
-    document.getElementById("userForm").style.display = "none";
-    document.getElementById("logoutBox").style.display = "block";
-    document.getElementById("pendingList").style.display = "block";
-    await loadFlats();
-  } else {
-    alert("Incorrect Password!");
-  }
-}
+    async function login() {
+      const pass = document.getElementById("adminPassword").value;
+      const hash = await sha256(pass);
+      if (hash === adminPasswordHash) {
+        isAdmin = true;
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminForm").style.display = "block";
+        document.getElementById("toggleLoginBtn").style.display = "none";
+        document.getElementById("postFlatBtn").style.display = "none";
+        document.getElementById("userForm").style.display = "none";
+        document.getElementById("logoutBox").style.display = "block";
+        document.getElementById("pendingList").style.display = "block";
+        await loadFlats();
+      } else {
+        alert("Incorrect Password!");
+      }
+    }
 
     function logout() {
       isAdmin = false;
@@ -486,7 +477,7 @@ if (flat.showNumber === "Yes") {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.3
+  v2025.1.0.2
 </div>
 </body>
 </html>
