@@ -300,15 +300,25 @@ button:hover {
     }
 
     async function uploadFlatImage(flatNumber, type) {
-      let imageInput = document.getElementById(type === "admin" ? "flatImage" : "userFlatImage");
-      if (imageInput && imageInput.files && imageInput.files[0]) {
-        const file = imageInput.files[0];
-        const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
-        await uploadBytes(imgRef, file);
-        return await getDownloadURL(imgRef);
-      }
+  let imageInput = document.getElementById(type === "admin" ? "flatImage" : "userFlatImage");
+  if (imageInput && imageInput.files && imageInput.files[0]) {
+    const file = imageInput.files[0];
+    console.log("Uploading file:", file);
+    const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
+    try {
+      await uploadBytes(imgRef, file);
+      const url = await getDownloadURL(imgRef);
+      console.log("Upload success, URL:", url);
+      return url;
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Image upload failed: " + err.message);
       return "";
     }
+  }
+  console.log("No image selected");
+  return "";
+}
 
     async function addFlat(type) {
       const flatNumber = (type === "admin" ? document.getElementById("flatNumber").value : document.getElementById("userFlatNumber").value) || "";
