@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,6 +151,7 @@ button:hover {
       <label>Show my number to tenant?
         <select id="showNumber"><option value="Yes">Yes</option><option value="No">No</option></select>
       </label>
+      <label>Flat Image: <input type="file" id="flatImage" accept="image/*" /></label>
       <button onclick="addFlat('admin')">Add Flat</button>
     </div>
 
@@ -179,6 +179,7 @@ button:hover {
       <label>Show my number to tenant?
         <select id="userShowNumber"><option value="Yes">Yes</option><option value="No">No</option></select>
       </label>
+      <label>Flat Image: <input type="file" id="userFlatImage" accept="image/*" /></label>
       <button onclick="addFlat('user')">Submit for Approval</button>
     </div>
 
@@ -195,67 +196,60 @@ button:hover {
   <!-- Firebase + Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
     import { firebaseConfig } from './firebase-config.js';
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     let flats = [];
     let pendingFlats = [];
     let isAdmin = false;
-    const defaultAppContact = "8260147054"; // used when owner chooses not to show number
+    const defaultAppContact = "8260147054";
 
-
-    // const adminPasswordHash
-import { getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-let adminPassword = null;
-
-async function loadAdminPassword() {
-  const docRef = doc(db, "users", "admin");
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    adminPassword = docSnap.data().password; // fetches the 'password' field
-  } else {
-    adminPassword = null;
-  }
-}
+    let adminPassword = null;
+    async function loadAdminPassword() {
+      const docRef = doc(db, "users", "admin");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        adminPassword = docSnap.data().password;
+      } else {
+        adminPassword = null;
+      }
+    }
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
       return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
     }
-
     function toggleLogin() {
-  const box = document.getElementById("loginBox");
-  box.style.display = (box.style.display === "none") ? "block" : "none";
-  if (box.style.display === "block") {
-    loadAdminPassword(); // <-- fetch password every time login is opened
-  }
-}
-
+      const box = document.getElementById("loginBox");
+      box.style.display = (box.style.display === "none") ? "block" : "none";
+      if (box.style.display === "block") {
+        loadAdminPassword();
+      }
+    }
     function toggleUserForm() {
       const box = document.getElementById("userForm");
       box.style.display = (box.style.display === "none") ? "block" : "none";
     }
-
-  async function login() {
-  const pass = document.getElementById("adminPassword").value;
-  if (adminPassword && pass === adminPassword) {
-    isAdmin = true;
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminForm").style.display = "block";
-    document.getElementById("toggleLoginBtn").style.display = "none";
-    document.getElementById("postFlatBtn").style.display = "none";
-    document.getElementById("userForm").style.display = "none";
-    document.getElementById("logoutBox").style.display = "block";
-    document.getElementById("pendingList").style.display = "block";
-    await loadFlats();
-  } else {
-    alert("Incorrect Password!");
-  }
-}
-
+    async function login() {
+      const pass = document.getElementById("adminPassword").value;
+      if (adminPassword && pass === adminPassword) {
+        isAdmin = true;
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminForm").style.display = "block";
+        document.getElementById("toggleLoginBtn").style.display = "none";
+        document.getElementById("postFlatBtn").style.display = "none";
+        document.getElementById("userForm").style.display = "none";
+        document.getElementById("logoutBox").style.display = "block";
+        document.getElementById("pendingList").style.display = "block";
+        await loadFlats();
+      } else {
+        alert("Incorrect Password!");
+      }
+    }
     function logout() {
       isAdmin = false;
       document.getElementById("adminForm").style.display = "none";
@@ -265,16 +259,13 @@ async function loadAdminPassword() {
       document.getElementById("pendingList").style.display = "none";
       loadFlats();
     }
-
     function isValidMobile(number) {
       const regex = /^[6-9]\d{9}$/;
       return regex.test(number);
     }
-
     function autoFillFloor(selectId, floorId) {
       const flat = document.getElementById(selectId).value || "";
       let floorText = "";
-
       if (/^00[1-7]$/.test(flat)) floorText = "Ground Floor";
       else if (/^10[1-7]$/.test(flat)) floorText = "1st Floor";
       else if (/^20[1-7]$/.test(flat)) floorText = "2nd Floor";
@@ -282,25 +273,19 @@ async function loadAdminPassword() {
       else if (/^40[1-7]$/.test(flat)) floorText = "4th Floor";
       else if (/^50[1-3]$/.test(flat)) floorText = "5th Floor";
       else floorText = "";
-
       document.getElementById(floorId).value = floorText;
     }
-
     async function flatExists(flatNumber) {
       if (!flatNumber) return false;
       const q = query(collection(db, "flats"), where("flatNumber", "==", flatNumber));
       const snapshot = await getDocs(q);
       return !snapshot.empty;
     }
-
     function clearForm(formId) {
       document.querySelectorAll(`#${formId} input, #${formId} select`).forEach(el => {
-        // keep readonly fields as-is
-       // if (!el.readOnly) 
-          el.value = "";
+        el.value = "";
       });
     }
-
     async function loadFlats() {
       flats = [];
       pendingFlats = [];
@@ -314,6 +299,17 @@ async function loadAdminPassword() {
       if (isAdmin) renderPending();
     }
 
+    async function uploadFlatImage(flatNumber, type) {
+      let imageInput = document.getElementById(type === "admin" ? "flatImage" : "userFlatImage");
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        const file = imageInput.files[0];
+        const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
+        await uploadBytes(imgRef, file);
+        return await getDownloadURL(imgRef);
+      }
+      return "";
+    }
+
     async function addFlat(type) {
       const flatNumber = (type === "admin" ? document.getElementById("flatNumber").value : document.getElementById("userFlatNumber").value) || "";
       const floor = (type === "admin" ? document.getElementById("floor").value : document.getElementById("userFloor").value) || "";
@@ -325,7 +321,6 @@ async function loadAdminPassword() {
       const showNumber = (type === "admin" ? document.getElementById("showNumber").value : document.getElementById("userShowNumber").value) || "Yes";
       const status = type === "admin" ? "approved" : "pending";
 
-      // required field checks
       if (!flatNumber || !rent || !deposit || !maintenance || !mobile) {
         alert("Please fill all required fields!");
         return;
@@ -334,13 +329,14 @@ async function loadAdminPassword() {
         alert("Please enter a valid 10-digit Indian mobile number.");
         return;
       }
-      // check duplicates (approved or pending)
       if (await flatExists(flatNumber)) {
         alert("This flat is already posted!");
         return;
       }
 
-      const flatObj = { flatNumber, floor, sqft, rent, deposit, maintenance, mobile, showNumber, status };
+      let imageUrl = await uploadFlatImage(flatNumber, type);
+
+      const flatObj = { flatNumber, floor, sqft, rent, deposit, maintenance, mobile, showNumber, status, imageUrl };
       await addDoc(collection(db, "flats"), flatObj);
       await loadFlats();
 
@@ -353,13 +349,11 @@ async function loadAdminPassword() {
       await updateDoc(doc(db, "flats", id), { status: "approved" });
       await loadFlats();
     }
-
     async function rejectFlat(id) {
       if (!confirm("Reject and delete this pending flat?")) return;
       await deleteDoc(doc(db, "flats", id));
       await loadFlats();
     }
-
     async function deleteFlat(id) {
       if (!confirm("Are you sure you want to delete this flat?")) return;
       await deleteDoc(doc(db, "flats", id));
@@ -381,31 +375,27 @@ async function loadAdminPassword() {
       flats.forEach(flat => {
         const card = document.createElement("div");
         card.className = "flat-card";
-let contactHtml = "";
+        let contactHtml = "";
 
-// Owner message
-const defaultMsg = encodeURIComponent("Dear Owner, I am interested in your flat. Please share more details.");
+        const defaultMsg = encodeURIComponent("Dear Owner, I am interested in your flat. Please share more details.");
+        const teamMsg = `Dear Team, I am interested in renting flat ${flat.flatNumber} in Elegance Enclave. Please share more details.`;
+        const defaultMsgforTeam = encodeURIComponent(teamMsg);
 
-// Team message including flat number
-const teamMsg = `Dear Team, I am interested in renting flat ${flat.flatNumber} in Elegance Enclave. Please share more details.`;
-const defaultMsgforTeam = encodeURIComponent(teamMsg);
-
-if (flat.showNumber === "Yes") {
-  // owner contact
-  contactHtml = `<p><strong>Owner Contact:</strong> ${flat.mobile}</p>
-                 <a class="whatsapp" href="https://wa.me/91${flat.mobile}?text=${defaultMsg}" target="_blank" rel="noopener noreferrer">
-                   Chat on WhatsApp
-                 </a>`;
-} else {
-  // application team contact
-  contactHtml = `<p><strong>Contact:</strong> <em>Via Application Team</em></p>
-                 <a class="whatsapp" href="https://wa.me/91${defaultAppContact}?text=${defaultMsgforTeam}" target="_blank" rel="noopener noreferrer">
-                   Contact App Team
-                 </a>`;
-}
+        if (flat.showNumber === "Yes") {
+          contactHtml = `<p><strong>Owner Contact:</strong> ${flat.mobile}</p>
+                         <a class="whatsapp" href="https://wa.me/91${flat.mobile}?text=${defaultMsg}" target="_blank" rel="noopener noreferrer">
+                           Chat on WhatsApp
+                         </a>`;
+        } else {
+          contactHtml = `<p><strong>Contact:</strong> <em>Via Application Team</em></p>
+                         <a class="whatsapp" href="https://wa.me/91${defaultAppContact}?text=${defaultMsgforTeam}" target="_blank" rel="noopener noreferrer">
+                           Contact App Team
+                         </a>`;
+        }
 
         card.innerHTML = `
           <h3>Flat ${flat.flatNumber} ${flat.sqft ? `(${flat.sqft} sqft)` : ""}</h3>
+          ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
           <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
           <p><strong>Rent:</strong> ₹${flat.rent}</p>
           <p><strong>Deposit:</strong> ₹${flat.deposit}</p>
@@ -427,18 +417,16 @@ if (flat.showNumber === "Yes") {
     function renderPending() {
       const list = document.getElementById("pendingFlats");
       list.innerHTML = "";
-
       if (!pendingFlats || pendingFlats.length === 0) {
         list.innerHTML = "<p>No pending flats.</p>";
         return;
       }
-
       pendingFlats.forEach(flat => {
         const card = document.createElement("div");
         card.className = "flat-card";
-
         card.innerHTML = `
           <h3>Flat ${flat.flatNumber} (Pending)</h3>
+          ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
           <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
           <p><strong>Sqft:</strong> ${flat.sqft || "N/A"}</p>
           <p><strong>Rent:</strong> ₹${flat.rent}</p>
@@ -446,7 +434,6 @@ if (flat.showNumber === "Yes") {
           <p><strong>Maintenance:</strong> ₹${flat.maintenance}</p>
           <p><strong>Owner Mobile:</strong> ${flat.mobile}</p>
         `;
-
         const approveBtn = document.createElement("button");
         approveBtn.className = "approve-btn";
         approveBtn.textContent = "Approve";
@@ -463,7 +450,6 @@ if (flat.showNumber === "Yes") {
       });
     }
 
-    // Expose for inline handlers
     window.autoFillFloor = autoFillFloor;
     window.addFlat = addFlat;
     window.approveFlat = approveFlat;
@@ -474,11 +460,10 @@ if (flat.showNumber === "Yes") {
     window.login = login;
     window.logout = logout;
 
-    // Load on start
     loadFlats();
-      document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
   </script>
   <div style="
   position: fixed;
@@ -491,7 +476,7 @@ if (flat.showNumber === "Yes") {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.5
+  v2025.1.0.6
 </div>
 </body>
 </html>
