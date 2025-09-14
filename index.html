@@ -40,15 +40,6 @@ header h1 {
   text-align: center;
 }
 
-/*header a.home-link {*/
-/*  background: white;*/
-/*  color: purple;*/
-/*  padding: 6px 12px;*/
-/*  border-radius: 6px;*/
-/*  text-decoration: none;*/
-/*  font-weight: bold;*/
-/*}*/
-
 header h1.header-logo {
       width: 56px;
       height: 56px;
@@ -74,14 +65,14 @@ header h1.header-logo {
   padding: 10px 18px;
   font-size: 16px;
   border: none;
-  background: var(--primary-dark); /* Changed from 'purple' */
+  background: var(--primary-dark);
   color: white;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 button:hover {
-  background: var(--primary); /* Changed from '#5a005a' */
+  background: var(--primary);
 }
     .controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
     .controls > * { flex:1; min-width:120px; }
@@ -151,7 +142,7 @@ button:hover {
       <label>Show my number to tenant?
         <select id="showNumber"><option value="Yes">Yes</option><option value="No">No</option></select>
       </label>
-      <label>Flat Image: <input type="file" id="flatImage" accept="image/*" /></label>
+      <label>Flat Images: <input type="file" id="adminFlatImage" accept="image/*" multiple /></label>
       <button onclick="addFlat('admin')">Add Flat</button>
     </div>
 
@@ -179,7 +170,7 @@ button:hover {
       <label>Show my number to tenant?
         <select id="userShowNumber"><option value="Yes">Yes</option><option value="No">No</option></select>
       </label>
-      <label>Flat Image: <input type="file" id="userFlatImage" accept="image/*" /></label>
+      <label>Flat Images: <input type="file" id="userFlatImage" accept="image/*" multiple /></label>
       <button onclick="addFlat('user')">Submit for Approval</button>
     </div>
 
@@ -250,6 +241,21 @@ button:hover {
         alert("Incorrect Password!");
       }
     }
+
+    async function uploadFlatImages(flatNumber, type) {
+      let imageInput = document.getElementById(type === "admin" ? "adminFlatImage" : "userFlatImage");
+      let urls = [];
+      if (imageInput && imageInput.files && imageInput.files.length > 0) {
+        for (let file of imageInput.files) {
+          const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
+          await uploadBytes(imgRef, file);
+          const url = await getDownloadURL(imgRef);
+          urls.push(url);
+        }
+      }
+      return urls;
+    }
+
     function logout() {
       isAdmin = false;
       document.getElementById("adminForm").style.display = "none";
@@ -299,27 +305,6 @@ button:hover {
       if (isAdmin) renderPending();
     }
 
-    async function uploadFlatImage(flatNumber, type) {
-  let imageInput = document.getElementById(type === "admin" ? "flatImage" : "userFlatImage");
-  if (imageInput && imageInput.files && imageInput.files[0]) {
-    const file = imageInput.files[0];
-    console.log("Uploading file:", file);
-    const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
-    try {
-      await uploadBytes(imgRef, file);
-      const url = await getDownloadURL(imgRef);
-      console.log("Upload success, URL:", url);
-      return url;
-    } catch (err) {
-      console.error("Upload failed:", err);
-      alert("Image upload failed: " + err.message);
-      return "";
-    }
-  }
-  console.log("No image selected");
-  return "";
-}
-
     async function addFlat(type) {
       const flatNumber = (type === "admin" ? document.getElementById("flatNumber").value : document.getElementById("userFlatNumber").value) || "";
       const floor = (type === "admin" ? document.getElementById("floor").value : document.getElementById("userFloor").value) || "";
@@ -344,9 +329,9 @@ button:hover {
         return;
       }
 
-      let imageUrl = await uploadFlatImage(flatNumber, type);
+      let imageUrls = await uploadFlatImages(flatNumber, type);
 
-      const flatObj = { flatNumber, floor, sqft, rent, deposit, maintenance, mobile, showNumber, status, imageUrl };
+      const flatObj = { flatNumber, floor, sqft, rent, deposit, maintenance, mobile, showNumber, status, imageUrls };
       await addDoc(collection(db, "flats"), flatObj);
       await loadFlats();
 
@@ -405,7 +390,9 @@ button:hover {
 
         card.innerHTML = `
           <h3>Flat ${flat.flatNumber} ${flat.sqft ? `(${flat.sqft} sqft)` : ""}</h3>
-          ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
+          ${(flat.imageUrls && flat.imageUrls.length)
+             ? flat.imageUrls.map(url => `<img src="${url}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />`).join('')
+             : ""}
           <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
           <p><strong>Rent:</strong> ₹${flat.rent}</p>
           <p><strong>Deposit:</strong> ₹${flat.deposit}</p>
@@ -436,7 +423,9 @@ button:hover {
         card.className = "flat-card";
         card.innerHTML = `
           <h3>Flat ${flat.flatNumber} (Pending)</h3>
-          ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
+          ${(flat.imageUrls && flat.imageUrls.length)
+             ? flat.imageUrls.map(url => `<img src="${url}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />`).join('')
+             : ""}
           <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
           <p><strong>Sqft:</strong> ${flat.sqft || "N/A"}</p>
           <p><strong>Rent:</strong> ₹${flat.rent}</p>
@@ -486,7 +475,7 @@ button:hover {
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.7
+  v2025.1.0.8
 </div>
 </body>
 </html>
