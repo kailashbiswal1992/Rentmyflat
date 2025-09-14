@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Elegance Enclave - Flats for Rent</title>
   <style>
-    /* ...your styles as before... */
-    :root {
+   :root {
       --bg: #f3f6fa;
       --primary: #2563eb;
       --primary-dark: #1e3a8a;
@@ -19,8 +18,8 @@
       --header-shadow: 0 4px 14px rgba(37,99,235,0.18);
       --font: 'Poppins', Arial, sans-serif;
     }
-    body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 0; }
-    header {
+  body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 0; }
+   header {
       background: linear-gradient(90deg, var(--primary-dark) 60%, var(--primary) 100%);
       color: #fff;
       padding: 22px 24px;
@@ -33,13 +32,24 @@
       box-shadow: var(--header-shadow);
       margin-bottom: 20px;
     }
-    header h1 {
-      margin: 0 auto;
-      font-size: 30px;
-      lex-grow: 1;
-      text-align: center;
-    }
-    header h1.header-logo {
+
+header h1 {
+  margin: 0 auto;
+  font-size: 30px;
+  lex-grow: 1;
+  text-align: center;
+}
+
+/*header a.home-link {*/
+/*  background: white;*/
+/*  color: purple;*/
+/*  padding: 6px 12px;*/
+/*  border-radius: 6px;*/
+/*  text-decoration: none;*/
+/*  font-weight: bold;*/
+/*}*/
+
+header h1.header-logo {
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -48,7 +58,7 @@
       border: 2px solid #fff;
       background: #fff;
       flex-shrink: 0;
-    }
+}
     .container { width: 90%; max-width: 1100px; margin: 20px auto; }
     .login-box, .flat-form, .user-form, .pending-list {
       background: white; padding: 20px; border-radius: 10px;
@@ -59,20 +69,20 @@
       width: 100%; padding: 8px 12px; font-size: 16px; margin-top: 5px;
       border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;
     }
-    button {
-      margin-top: 12px;
-      padding: 10px 18px;
-      font-size: 16px;
-      border: none;
-      background: var(--primary-dark);
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    button:hover {
-      background: var(--primary);
-    }
+   button {
+  margin-top: 12px;
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  background: var(--primary-dark); /* Changed from 'purple' */
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+button:hover {
+  background: var(--primary); /* Changed from '#5a005a' */
+}
     .controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
     .controls > * { flex:1; min-width:120px; }
     .flat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -121,9 +131,8 @@
     <div class="flat-form" id="adminForm" style="display:none;">
       <h2>Add / Edit Flat (Admin)</h2>
       <label>Flat Number:
-        <select id="flatNumber" onchange="autoFillFloor('flatNumber','floor','flatType')">
+        <select id="flatNumber" onchange="autoFillFloor('flatNumber','floor')">
           <option value="">-- Select Flat Number --</option>
-          <!-- ...options as before... -->
           <option value="001">001</option><option value="002">002</option><option value="003">003</option>
           <option value="004">004</option><option value="005">005</option><option value="006">006</option><option value="007">007</option>
           <option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option><option value="105">105</option><option value="106">106</option><option value="107">107</option>
@@ -134,7 +143,6 @@
         </select>
       </label>
       <label>Floor: <input type="text" id="floor" readonly /></label>
-      <label>Flat Type: <input type="text" id="flatType" readonly /></label>
       <label>Sqft: <input type="number" id="sqft" /></label>
       <label>Rent: <input type="number" id="rent" required /></label>
       <label>Advance Deposit: <input type="number" id="deposit" required /></label>
@@ -151,9 +159,8 @@
     <div class="user-form" id="userForm" style="display:none;">
       <h2>Post Your Flat for Rent</h2>
       <label>Flat Number:
-        <select id="userFlatNumber" onchange="autoFillFloor('userFlatNumber','userFloor','userFlatType')">
+        <select id="userFlatNumber" onchange="autoFillFloor('userFlatNumber','userFloor')">
           <option value="">-- Select Flat Number --</option>
-          <!-- ...options as before... -->
           <option value="001">001</option><option value="002">002</option><option value="003">003</option>
           <option value="004">004</option><option value="005">005</option><option value="006">006</option><option value="007">007</option>
           <option value="101">101</option><option value="102">102</option><option value="103">103</option><option value="104">104</option><option value="105">105</option><option value="106">106</option><option value="107">107</option>
@@ -164,7 +171,6 @@
         </select>
       </label>
       <label>Floor: <input type="text" id="userFloor" readonly /></label>
-      <label>Flat Type: <input type="text" id="userFlatType" readonly /></label>
       <label>Sqft: <input type="number" id="userSqft" /></label>
       <label>Rent: <input type="number" id="userRent" required /></label>
       <label>Advance Deposit: <input type="number" id="userDeposit" required /></label>
@@ -189,12 +195,75 @@
 
   <!-- Firebase + Script -->
   <script type="module">
-    // ...Firebase imports as before...
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { firebaseConfig } from './firebase-config.js';
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-    // --- Your existing JS code, with changes below ---
+    let flats = [];
+    let pendingFlats = [];
+    let isAdmin = false;
+    const defaultAppContact = "8260147054";
 
-    // Updated autoFillFloor function
-    function autoFillFloor(selectId, floorId, typeFieldId) {
+    let adminPassword = null;
+    async function loadAdminPassword() {
+      const docRef = doc(db, "users", "admin");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        adminPassword = docSnap.data().password;
+      } else {
+        adminPassword = null;
+      }
+    }
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+    function toggleLogin() {
+      const box = document.getElementById("loginBox");
+      box.style.display = (box.style.display === "none") ? "block" : "none";
+      if (box.style.display === "block") {
+        loadAdminPassword();
+      }
+    }
+    function toggleUserForm() {
+      const box = document.getElementById("userForm");
+      box.style.display = (box.style.display === "none") ? "block" : "none";
+    }
+    async function login() {
+      const pass = document.getElementById("adminPassword").value;
+      if (adminPassword && pass === adminPassword) {
+        isAdmin = true;
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminForm").style.display = "block";
+        document.getElementById("toggleLoginBtn").style.display = "none";
+        document.getElementById("postFlatBtn").style.display = "none";
+        document.getElementById("userForm").style.display = "none";
+        document.getElementById("logoutBox").style.display = "block";
+        document.getElementById("pendingList").style.display = "block";
+        await loadFlats();
+      } else {
+        alert("Incorrect Password!");
+      }
+    }
+    function logout() {
+      isAdmin = false;
+      document.getElementById("adminForm").style.display = "none";
+      document.getElementById("logoutBox").style.display = "none";
+      document.getElementById("toggleLoginBtn").style.display = "inline-block";
+      document.getElementById("postFlatBtn").style.display = "inline-block";
+      document.getElementById("pendingList").style.display = "none";
+      loadFlats();
+    }
+    function isValidMobile(number) {
+      const regex = /^[6-9]\d{9}$/;
+      return regex.test(number);
+    }
+    function autoFillFloor(selectId, floorId) {
       const flat = document.getElementById(selectId).value || "";
       let floorText = "";
       if (/^00[1-7]$/.test(flat)) floorText = "Ground Floor";
@@ -205,22 +274,56 @@
       else if (/^50[1-3]$/.test(flat)) floorText = "5th Floor";
       else floorText = "";
       document.getElementById(floorId).value = floorText;
-
-      // Flat Type logic
-      let flatType = "";
-      if (flat.endsWith("02")) flatType = "1 BHK";
-      else if (flat.endsWith("07")) flatType = "3 BHK";
-      else if (flat) flatType = "2 BHK";
-      else flatType = "";
-      if (typeFieldId) document.getElementById(typeFieldId).value = flatType;
+    }
+    async function flatExists(flatNumber) {
+      if (!flatNumber) return false;
+      const q = query(collection(db, "flats"), where("flatNumber", "==", flatNumber));
+      const snapshot = await getDocs(q);
+      return !snapshot.empty;
+    }
+    function clearForm(formId) {
+      document.querySelectorAll(`#${formId} input, #${formId} select`).forEach(el => {
+        el.value = "";
+      });
+    }
+    async function loadFlats() {
+      flats = [];
+      pendingFlats = [];
+      const snapshot = await getDocs(collection(db, "flats"));
+      snapshot.forEach(docSnap => {
+        const flat = { id: docSnap.id, ...docSnap.data() };
+        if (flat.status === "approved") flats.push(flat);
+        else if (flat.status === "pending") pendingFlats.push(flat);
+      });
+      renderFlats();
+      if (isAdmin) renderPending();
     }
 
-    // In addFlat, get flatType value
+    async function uploadFlatImage(flatNumber, type) {
+  let imageInput = document.getElementById(type === "admin" ? "flatImage" : "userFlatImage");
+  if (imageInput && imageInput.files && imageInput.files[0]) {
+    const file = imageInput.files[0];
+    console.log("Uploading file:", file);
+    const imgRef = storageRef(storage, `flat-images/${flatNumber}_${Date.now()}_${file.name}`);
+    try {
+      await uploadBytes(imgRef, file);
+      const url = await getDownloadURL(imgRef);
+      console.log("Upload success, URL:", url);
+      return url;
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Image upload failed: " + err.message);
+      return "";
+    }
+  }
+  console.log("No image selected");
+  return "";
+}
+
     async function addFlat(type) {
       const flatNumber = (type === "admin" ? document.getElementById("flatNumber").value : document.getElementById("userFlatNumber").value) || "";
       const floor = (type === "admin" ? document.getElementById("floor").value : document.getElementById("userFloor").value) || "";
       const sqft = (type === "admin" ? document.getElementById("sqft").value : document.getElementById("userSqft").value) || "";
-      const flatType = (type === "admin" ? document.getElementById("flatType").value : document.getElementById("userFlatType").value) || "";
       const rent = (type === "admin" ? document.getElementById("rent").value : document.getElementById("userRent").value) || "";
       const deposit = (type === "admin" ? document.getElementById("deposit").value : document.getElementById("userDeposit").value) || "";
       const maintenance = (type === "admin" ? document.getElementById("maintenance").value : document.getElementById("userMaintenance").value) || "";
@@ -243,7 +346,7 @@
 
       let imageUrl = await uploadFlatImage(flatNumber, type);
 
-      const flatObj = { flatNumber, floor, sqft, flatType, rent, deposit, maintenance, mobile, showNumber, status, imageUrl };
+      const flatObj = { flatNumber, floor, sqft, rent, deposit, maintenance, mobile, showNumber, status, imageUrl };
       await addDoc(collection(db, "flats"), flatObj);
       await loadFlats();
 
@@ -252,7 +355,21 @@
       if (type === "admin") clearForm("adminForm"); else clearForm("userForm");
     }
 
-    // In renderFlats, show Flat Type
+    async function approveFlat(id) {
+      await updateDoc(doc(db, "flats", id), { status: "approved" });
+      await loadFlats();
+    }
+    async function rejectFlat(id) {
+      if (!confirm("Reject and delete this pending flat?")) return;
+      await deleteDoc(doc(db, "flats", id));
+      await loadFlats();
+    }
+    async function deleteFlat(id) {
+      if (!confirm("Are you sure you want to delete this flat?")) return;
+      await deleteDoc(doc(db, "flats", id));
+      await loadFlats();
+    }
+
     function renderFlats() {
       const list = document.getElementById("flatList");
       const header = document.getElementById("availableFlatsHeader");
@@ -287,15 +404,15 @@
         }
 
         card.innerHTML = `
-          <h3>Flat ${flat.flatNumber} ${flat.sqft ? `(${flat.sqft} sqft)` : ""} ${flat.flatType ? `- ${flat.flatType}` : ""}</h3>
+          <h3>Flat ${flat.flatNumber} ${flat.sqft ? `(${flat.sqft} sqft)` : ""}</h3>
           ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
           <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
-          <p><strong>Type:</strong> ${flat.flatType || "N/A"}</p>
           <p><strong>Rent:</strong> ₹${flat.rent}</p>
           <p><strong>Deposit:</strong> ₹${flat.deposit}</p>
           <p><strong>Maintenance:</strong> ₹${flat.maintenance}</p>
           ${contactHtml}
         `;
+
         if (isAdmin) {
           const delBtn = document.createElement("button");
           delBtn.className = "delete-btn";
@@ -307,8 +424,69 @@
       });
     }
 
-    // ...rest of your JS unchanged...
+    function renderPending() {
+      const list = document.getElementById("pendingFlats");
+      list.innerHTML = "";
+      if (!pendingFlats || pendingFlats.length === 0) {
+        list.innerHTML = "<p>No pending flats.</p>";
+        return;
+      }
+      pendingFlats.forEach(flat => {
+        const card = document.createElement("div");
+        card.className = "flat-card";
+        card.innerHTML = `
+          <h3>Flat ${flat.flatNumber} (Pending)</h3>
+          ${flat.imageUrl ? `<img src="${flat.imageUrl}" alt="Flat Image" style="max-width:100%; border-radius:8px; margin-bottom:8px;" />` : ""}
+          <p><strong>Floor:</strong> ${flat.floor || "N/A"}</p>
+          <p><strong>Sqft:</strong> ${flat.sqft || "N/A"}</p>
+          <p><strong>Rent:</strong> ₹${flat.rent}</p>
+          <p><strong>Deposit:</strong> ₹${flat.deposit}</p>
+          <p><strong>Maintenance:</strong> ₹${flat.maintenance}</p>
+          <p><strong>Owner Mobile:</strong> ${flat.mobile}</p>
+        `;
+        const approveBtn = document.createElement("button");
+        approveBtn.className = "approve-btn";
+        approveBtn.textContent = "Approve";
+        approveBtn.onclick = () => approveFlat(flat.id);
 
+        const rejectBtn = document.createElement("button");
+        rejectBtn.className = "reject-btn";
+        rejectBtn.textContent = "Reject";
+        rejectBtn.onclick = () => rejectFlat(flat.id);
+
+        card.appendChild(approveBtn);
+        card.appendChild(rejectBtn);
+        list.appendChild(card);
+      });
+    }
+
+    window.autoFillFloor = autoFillFloor;
+    window.addFlat = addFlat;
+    window.approveFlat = approveFlat;
+    window.rejectFlat = rejectFlat;
+    window.deleteFlat = deleteFlat;
+    window.toggleLogin = toggleLogin;
+    window.toggleUserForm = toggleUserForm;
+    window.login = login;
+    window.logout = logout;
+
+    loadFlats();
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
   </script>
+  <div style="
+  position: fixed;
+  bottom: 8px;
+  right: 18px;
+  font-size: 14px;
+  color: #2563eb;
+  opacity: 0.35;
+  background: transparent;
+  pointer-events: none;
+  font-family: 'Poppins', Arial, sans-serif;
+">
+  v2025.1.0.7
+</div>
 </body>
 </html>
