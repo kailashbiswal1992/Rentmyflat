@@ -191,15 +191,8 @@ button:hover {
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-    const firebaseConfig = {
-      apiKey: "AIzaSyDykGxIq2GUDxFkv28NLmdRmiQzlEjvFuw",
-      authDomain: "rento-56bca.firebaseapp.com",
-      projectId: "rento-56bca",
-      storageBucket: "rento-56bca.appspot.com",
-      messagingSenderId: "641174222477",
-      appId: "1:641174222477:web:583370943c737c015d14c4",
-      measurementId: "G-G2S1HW7ZNT"
-    };
+    import { firebaseConfig } from './firebase-config.js';
+   
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
@@ -497,7 +490,7 @@ else bhkText = "";
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.9
+  v2025.1.0.10
 </div>
 </body>
 </html>
