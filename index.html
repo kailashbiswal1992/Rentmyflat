@@ -88,16 +88,80 @@ button:hover {
     @media (max-width:600px) {
       .controls { flex-direction: column; }
     }
+    
+body.dark-mode {
+  background: #171923;
+  color: #e3e8ee;
+}
+body.dark-mode header {
+  background: linear-gradient(90deg, #0d1e4a 60%, #243b6e 100%);
+  color: #e3e8ee;
+}
+body.dark-mode .container,
+body.dark-mode .flat-card,
+body.dark-mode .login-box,
+body.dark-mode .flat-form,
+body.dark-mode .user-form,
+body.dark-mode .pending-list {
+  background: #22243a;
+  color: #e3e8ee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+body.dark-mode input,
+body.dark-mode select {
+  background: #22243a;
+  color: #e3e8ee;
+  border: 1px solid #444;
+}
+body.dark-mode button {
+  background: #314286;
+  color: #e3e8ee;
+}
+body.dark-mode button:hover {
+  background: #2563eb;
+}
+.theme-toggle-btn {
+  border-radius: 999px;
+  padding: 8px 20px;
+  background: #fff;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+  margin-left: 18px;
+  transition: background 0.2s, color 0.2s;
+}
+.theme-toggle-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* Dark Mode styles for button */
+body.dark-mode .theme-toggle-btn {
+  background: #314286;
+  color: #e3e8ee;
+}
+body.dark-mode .theme-toggle-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* For header alignment */
+header {
+  gap: 12px;
+}
   </style>
 </head>
 <body>
  <header>
-      <a href="https://eleganceenclave.tiiny.site" target="_blank">
-  <img src="https://i.ibb.co/ZRNQxN5q/file-00000000777461fa82518c850f7680e9.png"
-       alt="Elegance Enclave Logo"
-       style="width:56px; height:56px; border-radius:50%; object-fit:cover; background:white; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.10);"/>
-</a>
-    <h1>Elegance Enclave - Flats for Rent</h1>
+  <a href="https://eleganceenclave.tiiny.site" target="_blank">
+    <img src="https://i.ibb.co/ZRNQxN5q/file-00000000777461fa82518c850f7680e9.png"
+         alt="Elegance Enclave Logo"
+         style="width:56px; height:56px; border-radius:50%; object-fit:cover; background:white; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.10);" />
+  </a>
+  <h1>Elegance Enclave - Flats for Rent</h1>
+  <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn">🌗 Dark</button>
 </header>
 
   <div class="container">
@@ -188,6 +252,23 @@ button:hover {
 
   <!-- Firebase + Script -->
   <script type="module">
+    window.toggleTheme = function() {
+  const body = document.body;
+  const btn = document.getElementById("themeToggleBtn");
+  body.classList.toggle("dark-mode");
+  if (body.classList.contains("dark-mode")) {
+    btn.textContent = "☀️ Light";
+    localStorage.setItem("theme", "dark");
+  } else {
+    btn.textContent = "🌗 Dark";
+    localStorage.setItem("theme", "light");
+  }
+};
+// Load theme from localStorage
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  document.getElementById("themeToggleBtn").textContent = "☀️ Light";
+}
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -490,7 +571,7 @@ else bhkText = "";
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.10
+  v2025.1.0.10a
 </div>
 </body>
 </html>
