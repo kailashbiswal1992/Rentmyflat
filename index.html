@@ -36,7 +36,7 @@
 header h1 {
   margin: 0 auto;
   font-size: 30px;
-  lex-grow: 1;
+  flex-grow: 1;
   text-align: center;
 }
 
@@ -151,6 +151,45 @@ body.dark-mode .theme-toggle-btn:hover {
 header {
   gap: 12px;
 }
+.theme-switch {
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
+}
+.theme-switch input[type="checkbox"] {
+  display: none;
+}
+.switch-label {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  color: #2563eb;
+  border-radius: 999px;
+  padding: 8px 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+  user-select: none;
+}
+.switch-icon {
+  margin-right: 8px;
+  font-size: 1.3em;
+}
+.switch-label:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+body.dark-mode .switch-label {
+  background: #314286;
+  color: #e3e8ee;
+}
+body.dark-mode .switch-label:hover {
+  background: #2563eb;
+  color: #fff;
+}
   </style>
 </head>
 <body>
@@ -161,7 +200,14 @@ header {
          style="width:56px; height:56px; border-radius:50%; object-fit:cover; background:white; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.10);" />
   </a>
   <h1>Elegance Enclave - Flats for Rent</h1>
-  <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn">🌗 Dark</button>
+  <!--<button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn">🌙 Dark</button>-->
+<div class="theme-switch">
+  <input type="checkbox" id="themeToggleSwitch" onchange="toggleThemeSwitch()" />
+  <label for="themeToggleSwitch" class="switch-label">
+    <span class="switch-icon" id="switchIcon">🌙</span>
+    <span class="switch-text" id="switchText">Dark</span>
+  </label>
+</div>
 </header>
 
   <div class="container">
@@ -252,22 +298,29 @@ header {
 
   <!-- Firebase + Script -->
   <script type="module">
-    window.toggleTheme = function() {
+  window.toggleThemeSwitch = function() {
   const body = document.body;
-  const btn = document.getElementById("themeToggleBtn");
-  body.classList.toggle("dark-mode");
-  if (body.classList.contains("dark-mode")) {
-    btn.textContent = "☀️ Light";
+  const isDark = document.getElementById("themeToggleSwitch").checked;
+  const icon = document.getElementById("switchIcon");
+  const text = document.getElementById("switchText");
+  if (isDark) {
+    body.classList.add("dark-mode");
+    icon.textContent = "☀️";
+    text.textContent = "Light";
     localStorage.setItem("theme", "dark");
   } else {
-    btn.textContent = "🌗 Dark";
+    body.classList.remove("dark-mode");
+    icon.textContent = "🌙";
+    text.textContent = "Dark";
     localStorage.setItem("theme", "light");
   }
 };
-// Load theme from localStorage
+// On page load, set switch position
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
-  document.getElementById("themeToggleBtn").textContent = "☀️ Light";
+  document.getElementById("themeToggleSwitch").checked = true;
+  document.getElementById("switchIcon").textContent = "☀️";
+  document.getElementById("switchText").textContent = "Light";
 }
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -571,7 +624,7 @@ else bhkText = "";
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.10a
+  v2025.1.0.10b
 </div>
 </body>
 </html>
