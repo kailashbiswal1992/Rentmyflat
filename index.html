@@ -190,6 +190,21 @@ body.dark-mode .switch-label:hover {
   background: #2563eb;
   color: #fff;
 }
+@media (max-width: 600px) {
+  .switch-label {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+  .switch-icon {
+    font-size: 1em;
+    margin-right: 6px;
+  }
+  .theme-switch {
+    margin-left: 0;
+    align-self: flex-end;
+    margin-top: 4px;
+  }
+}
   </style>
 </head>
 <body>
@@ -199,7 +214,7 @@ body.dark-mode .switch-label:hover {
          alt="Elegance Enclave Logo"
          style="width:56px; height:56px; border-radius:50%; object-fit:cover; background:white; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.10);" />
   </a>
-  <h1>Elegance Enclave - Flats for Rent</h1>
+  <h1>Flats for Rent</h1>
   <!--<button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn">🌙 Dark</button>-->
 <div class="theme-switch">
   <input type="checkbox" id="themeToggleSwitch" onchange="toggleThemeSwitch()" />
@@ -624,7 +639,7 @@ else bhkText = "";
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.10b
+  v2025.1.0.10c
 </div>
 </body>
 </html>
