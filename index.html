@@ -205,6 +205,16 @@ body.dark-mode .switch-label:hover {
     margin-top: 4px;
   }
 }
+@media (max-width: 600px) {
+  .theme-toggle-btn {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+  #switchIcon {
+    font-size: 1em;
+    margin-right: 6px;
+  }
+}
   </style>
 </head>
 <body>
@@ -216,13 +226,17 @@ body.dark-mode .switch-label:hover {
   </a>
   <h1>Flats for Rent</h1>
   <!--<button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn">🌙 Dark</button>-->
-<div class="theme-switch">
-  <input type="checkbox" id="themeToggleSwitch" onchange="toggleThemeSwitch()" />
-  <label for="themeToggleSwitch" class="switch-label">
-    <span class="switch-icon" id="switchIcon">🌙</span>
-    <span class="switch-text" id="switchText">Dark</span>
-  </label>
-</div>
+  <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleThemeSwitch()">
+  <span id="switchIcon">🌙</span>
+  <span id="switchText">Dark</span>
+</button>
+<!--<div class="theme-switch">-->
+<!--  <input type="checkbox" id="themeToggleSwitch" onchange="toggleThemeSwitch()" />-->
+<!--  <label for="themeToggleSwitch" class="switch-label">-->
+<!--    <span class="switch-icon" id="switchIcon">🌙</span>-->
+<!--    <span class="switch-text" id="switchText">Dark</span>-->
+<!--  </label>-->
+<!--</div>-->
 </header>
 
   <div class="container">
@@ -313,11 +327,11 @@ body.dark-mode .switch-label:hover {
 
   <!-- Firebase + Script -->
   <script type="module">
-  window.toggleThemeSwitch = function() {
+window.toggleThemeSwitch = function() {
   const body = document.body;
-  const isDark = document.getElementById("themeToggleSwitch").checked;
   const icon = document.getElementById("switchIcon");
   const text = document.getElementById("switchText");
+  const isDark = !body.classList.contains("dark-mode");
   if (isDark) {
     body.classList.add("dark-mode");
     icon.textContent = "☀️";
@@ -330,10 +344,9 @@ body.dark-mode .switch-label:hover {
     localStorage.setItem("theme", "light");
   }
 };
-// On page load, set switch position
+// On page load, set button appearance
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
-  document.getElementById("themeToggleSwitch").checked = true;
   document.getElementById("switchIcon").textContent = "☀️";
   document.getElementById("switchText").textContent = "Light";
 }
@@ -639,7 +652,7 @@ else bhkText = "";
   pointer-events: none;
   font-family: 'Poppins', Arial, sans-serif;
 ">
-  v2025.1.0.10c
+  v2025.1.0.10d
 </div>
 </body>
 </html>
